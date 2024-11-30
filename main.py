@@ -6,7 +6,7 @@ import psycopg2
 from fastapi import FastAPI, HTTPException
 import hashlib
 from ValidPass import is_strong_password
-from PydanticFile import UserCreate, UserLogin, userResetPassword, userDeleteRequest, addPasswordRequest
+from Validation_Schema import UserCreate, UserLogin, UserResetPassword, UserDeleteRequest, AddPasswordRequest
 from db import connect_db , create_users_table ,create_passwords_table
 
 app = FastAPI()
@@ -65,7 +65,7 @@ async def login(user: UserLogin):
         conn.close()
 
 @app.post("/reset-password")
-async def reset_password(user: userResetPassword):
+async def reset_password(user: UserResetPassword):
     username = user.username
     current_password = user.current_password
     new_password = user.new_password
@@ -102,7 +102,7 @@ async def reset_password(user: userResetPassword):
     return {"message":"Password reset Successfully!"}
 
 @app.post("/delete-account")
-async def delete_account(user: userDeleteRequest):
+async def delete_account(user: UserDeleteRequest):
     username = user.username
     password = user.password
 
@@ -131,7 +131,7 @@ async def delete_account(user: userDeleteRequest):
     return {"message" : " Your Account Deleted Successfully!"}
 
 @app.post("/add-password")
-async def add_password(user: addPasswordRequest):
+async def add_password(user: AddPasswordRequest):
     username = user.username
     password = user.password
     service = user.service
@@ -151,7 +151,7 @@ async def add_password(user: addPasswordRequest):
         if result[0] != hashed_password:
             raise HTTPException(status_code = 401, detail = "Current Password is incorrect.")
     
-        cursor.execute("INSERT INTO passwords(user_id, services, password) VALUES(%s, %s, %s)", (user_id, service, service_password))
+        cursor.execute("INSERT INTO passwords(user_id, services, password) VALUES(%s, %s, %s)", (username, service, service_password))
         conn.commit
 
     except psycopg2.IntegrityError:
