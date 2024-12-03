@@ -1,4 +1,4 @@
-from PydanticFile import addPasswordRequest, retrievePassword, updatePassword, deletePassword,viewServices
+from Validation_Schema import addPasswordRequest, retrievePassword, updatePassword, deletePassword,viewServices
 from db import connect_db,create_passwords_table
 import hashlib, psycopg2
 from fastapi import FastAPI, HTTPException
