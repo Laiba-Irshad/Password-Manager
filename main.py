@@ -5,9 +5,9 @@ from datetime import datetime
 import psycopg2
 from fastapi import FastAPI, HTTPException
 import hashlib
-from ValidPass import is_strong_password
-from Validation_Schema import UserCreate, UserLogin, UserResetPassword, UserDeleteRequest, AddPasswordRequest
-from db import connect_db , create_users_table ,create_passwords_table
+from valid_pass import is_strong_password
+from validation_schema import UserCreate, UserLogin, UserResetPassword, UserDeleteRequest, AddPasswordRequest
+from db_operations import connect_db , create_users_table ,create_passwords_table
 
 app = FastAPI()
 

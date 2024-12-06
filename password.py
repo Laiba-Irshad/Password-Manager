@@ -1,5 +1,5 @@
-from Validation_Schema import addPasswordRequest, retrievePassword, updatePassword, deletePassword,viewServices
-from db import connect_db,create_passwords_table
+from validation_schema import addPasswordRequest, retrievePassword, updatePassword, deletePassword,viewServices
+from db_operations import connect_db,create_passwords_table
 import hashlib, psycopg2
 from fastapi import FastAPI, HTTPException
 from cryptography.fernet import Fernet
