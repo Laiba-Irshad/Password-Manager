@@ -1,23 +1,12 @@
-from validation_schema import addPasswordRequest, retrievePassword, updatePassword, deletePassword,viewServices
-from db_operations import connect_db,create_passwords_table
+from validations.password import AddPasswordRequest, RetrievePassword, UpdatePassword, DeletePassword,ViewServices
+from db.connection import connect_db,create_passwords_table
 import hashlib, psycopg2
 from fastapi import FastAPI, HTTPException
-from cryptography.fernet import Fernet
-
-
-app = FastAPI()
-create_passwords_table()
-
-def encrypt_password(plain_text, key):
-    fernet = Fernet(key)
-    return fernet.encrypt(plain_text.encode()).decode()
-
-def decrypt_password(encrypted_password: str, key: str) -> str:
-    fernet = Fernet(key)
-    return fernet.decrypt(encrypted_password.encode()).decode()
+from my_app import app
+from utils import encrypt_password, decrypt_password
 
 @app.post("/add-password")
-async def add_password(user: addPasswordRequest):
+async def add_password(user: AddPasswordRequest):
     username = user.username
     password = user.password
     service = user.service
@@ -60,7 +49,7 @@ async def add_password(user: addPasswordRequest):
     return {"message": "Password added successfully for the service!"}
 
 @app.post("/retrieve-password")
-async def retrieve_password(user: retrievePassword):
+async def retrieve_password(user: RetrievePassword):
     username = user.username
     password = user.password
     service = user.service
@@ -108,7 +97,7 @@ async def retrieve_password(user: retrievePassword):
     return {"service": service, "password": decrypted_password}
 
 @app.put("/update-password")
-async def update_password(request: updatePassword):
+async def update_password(request: UpdatePassword):
     username = request.username
     password = request.password
     service = request.service
@@ -170,7 +159,7 @@ async def update_password(request: updatePassword):
     return {"message": f"Password for service '{service}' updated successfully!"}
 
 @app.delete("/delete-password")
-async def delete_password(request: deletePassword):
+async def delete_password(request: DeletePassword):
     username = request.username
     password = request.password
     service = request.service
@@ -221,7 +210,7 @@ async def delete_password(request: deletePassword):
     return {"message": f"Password for service '{service}' deleted successfully!"}
 
 @app.get("/view-all-services")
-async def view_all_services(request: viewServices):
+async def view_all_services(request: ViewServices):
     username = request.username
     password = request.password
 

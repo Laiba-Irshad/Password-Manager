@@ -57,4 +57,4 @@ def create_passwords_table():
         conn.rollback()
     finally:
         cursor.close()
-        conn.close()
+        conn.close() 

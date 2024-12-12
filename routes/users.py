@@ -1,19 +1,11 @@
-import sys
-sys.path.append('c:/Users/HP/Desktop/Password-Generator')
-
 from datetime import datetime
 import psycopg2
 from fastapi import FastAPI, HTTPException
 import hashlib
-from valid_pass import is_strong_password
-from validation_schema import UserCreate, UserLogin, UserResetPassword, UserDeleteRequest, AddPasswordRequest
-from db_operations import connect_db , create_users_table ,create_passwords_table
-
-app = FastAPI()
-
-create_users_table()
-create_passwords_table()
-
+from validations.users import UserCreate, UserLogin, UserResetPassword, UserDeleteRequest
+from utils.validation import is_strong_password
+from db.connection import connect_db , create_users_table ,create_passwords_table
+from my_app import app
 
 @app.post("/signup")
 async def create_account(user: UserCreate):
@@ -129,38 +121,3 @@ async def delete_account(user: UserDeleteRequest):
         conn.close()
 
     return {"message" : " Your Account Deleted Successfully!"}
-
-@app.post("/add-password")
-async def add_password(user: AddPasswordRequest):
-    username = user.username
-    password = user.password
-    service = user.service
-    service_password = user.service_password
-
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    conn = connect_db()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("SELECT password FROM users WHERE username = %s", (username,))
-        result = cursor.fetchone()
-
-        if not result:
-            raise HTTPException(status_code = 401, detail = "Username not found.")
-        
-        if result[0] != hashed_password:
-            raise HTTPException(status_code = 401, detail = "Current Password is incorrect.")
-    
-        cursor.execute("INSERT INTO passwords(user_id, services, password) VALUES(%s, %s, %s)", (username, service, service_password))
-        conn.commit
-
-    except psycopg2.IntegrityError:
-        conn.rollback()
-        raise HTTPException(status_code= 400, detail ="Password for this service already exists.")
-    
-    finally:
-        
-        cursor.close()
-        conn.close()
-
-    return {"message" : " Password added Successfully for the Service!"}

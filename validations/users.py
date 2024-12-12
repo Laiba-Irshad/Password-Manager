@@ -1,3 +1,4 @@
+
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
@@ -17,22 +18,4 @@ class UserResetPassword(BaseUser):
     new_password: str
 
 class UserDeleteRequest(BaseUser):
-    pass
-
-class ServiceAction(BaseUser):
-    service: str
-
-class AddPasswordRequest(ServiceAction):
-    service_password: str
-    
-class RetrievePassword(ServiceAction):
-    pass
-
-class UpdatePassword(ServiceAction):
-    new_service_password: str
-
-class DeletePassword(ServiceAction):
-    pass 
-
-class ViewServices(ServiceAction):
     pass
